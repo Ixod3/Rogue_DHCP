@@ -4,6 +4,7 @@
 import fct_dhcp
 import fct_random
 import fct_scapy
+import fct_os
 import argparse
 import time
 import os
@@ -19,18 +20,23 @@ parser.add_argument("-i","--interface", required=True, help="Interface network")
 args = parser.parse_args()
 
 # Set promiscuitous interface
-os.system(f"sudo ifconfig {args.interface} promisc")
+# For wire connexion
+#os.system(f"sudo ifconfig {args.interface} promisc") 
+
+# For wireless connexion
+fct_os.change_mac(args.interface)
+actual_mac = fct_os.get_mac(args.interface)
+print (actual_mac)
 
 # Listener discover start
-sniff_packet = fct_scapy.listener_start("44:af:28:d9:46:a3")
+sniff_packet = fct_scapy.listener_start(actual_mac)
 
 # DHCP Discover
-xid = fct_random.rand_transaction_id()
-fct_dhcp.discover("44:af:28:d9:46:a3", xid, args.interface)
+xid = fct_random.transaction_id()
+fct_dhcp.discover(actual_mac, xid, args.interface)
 
 # Listener discover join
 legit_dhcp_ip = fct_scapy.listener_join(sniff_packet)
 print (f"{Green}[+]{White} DHCP Server IP address is {legit_dhcp_ip}")
 
-# dst mac why not ffffffff ?
-# debian enable wifi promiscious mode
+# listener return necesary variables from DHCP request
