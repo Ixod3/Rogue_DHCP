@@ -18,5 +18,5 @@ def get_mac(interface):
     return actual_mac
 
 def set_promiscuous(interface):
-    subprocess.run(f"sudo ifconfig {interface} up 2>&1 > /dev/null", shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+    subprocess.run(f"sudo ifconfig {interface} promisc 2>&1 > /dev/null", shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
     time.sleep(3)
