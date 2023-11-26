@@ -11,7 +11,7 @@ def valid_mac():
 
     # Random vendor ID
     ligne = random.randint(0, 2000)
-    with open("mac_vendor_id", 'r') as fichier:
+    with open("mac_vendor_id.txt", 'r') as fichier:
             lignes = fichier.readlines()
             if 0 <= ligne < len(lignes):
                 vendor_id = lignes[ligne].replace("\n","")
