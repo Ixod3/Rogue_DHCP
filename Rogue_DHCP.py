@@ -23,16 +23,16 @@ args = parser.parse_args()
 print(f"{Blue}[~]{White} Enable promisc mode on {args.interface}")
 fct_os.set_promiscuous(args.interface)
 # Get interface's mac
-actual_mac = "4c:e1:73:4d:4a:08"#fct_os.get_mac(args.interface)
+random_mac = fct_random.valid_mac()
 # Get random hostname
 hostname = fct_random.hostname()
 # Get random transaction ID
 xid = fct_random.transaction_id()
 
 # Listener discover start
-sniff_packet = fct_scapy.listener_start(actual_mac)
+sniff_packet = fct_scapy.listener_start(random_mac)
 # DHCP Discover
-fct_dhcp.discover(actual_mac, hostname, xid, args.interface)
+fct_dhcp.discover(random_mac, hostname, xid, args.interface)
 # Listener discover join
 dhcp_offer = fct_scapy.listener_join(sniff_packet)
 print (f"{Green}[+]{White} Capture - DHCP Offer")
