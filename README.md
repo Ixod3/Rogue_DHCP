@@ -14,7 +14,6 @@ Sources :
 ## Next
 
 - Check if interface exist
-- Implement DHCP Request
 - Detect free ip with ARP and ICMP request
 - Renew reserved ip before expire (wire connexion only)
 - DHCP Release for reserve IP already reserved ?

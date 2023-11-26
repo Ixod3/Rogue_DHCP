@@ -12,7 +12,7 @@ def listener_start(src_mac):
 
 def listener_join(sniff_packet):
     sniff_packet.join()
-    results = sniff_packet.results
-    legit_dhcp_ip = results[0][scapy.IP].src
-    legit_dhcp_mac = results[0][scapy.Ether].src
-    return legit_dhcp_ip
+    dhcp_offer = sniff_packet.results
+    #legit_dhcp_ip = results[0][scapy.IP].src
+    #legit_dhcp_mac = results[0][scapy.Ether].src
+    return dhcp_offer

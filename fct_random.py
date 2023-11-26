@@ -10,5 +10,9 @@ def valid_mac():
     random_mac = str(f"fc:3c:2c:{bytes_4}:{bytes_5}:{bytes_6}")
 
 def transaction_id():
-    random_transaction_id = random.randint(0, 0xFFFFFFF)
+    random_transaction_id = random.randint(0, 0xFFFFFFFF)
     return random_transaction_id
+
+def hostname():
+    hostname = "Laptop-" + str(random.randint(0, 0xFFFFFFFF))
+    return hostname
