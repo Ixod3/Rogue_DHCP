@@ -22,12 +22,8 @@ parser.add_argument("-i","--interface", required=True, help="Interface network")
 args = parser.parse_args()
 
 # scan ARP
-own_ip, network_id, host_number = fct_os.interface_ip(args.interface)
-
-for i in range(host_number):
-    result = fct_scan.arp(own_ip, f"{network_id}{i+1}", args.interface)
-    if result == True:
-        print(f"{Green}[+]{White} IP Address {network_id}{i+1} is used")
+own_ip, network_id, host_number = fct_os.interface_information(args.interface)
+free_ip_list = fct_scan.arp(network_id, host_number, args.interface)
 
 # Enable promisc mode
 print(f"{Blue}[~]{White} Enable promisc mode on {args.interface}")
