@@ -7,7 +7,6 @@ import fct_scapy
 import fct_os
 import argparse
 import time
-import os
 
 # Set color variables
 Green = "\033[1;32m"
@@ -46,3 +45,5 @@ fct_dhcp.request(dst_mac, offer_ip, hostname, xid, args.interface)
 # Listener request join
 dhcp_ack = fct_scapy.listener_join(sniff_packet)
 print (f"{Green}[+]{White} Capture - DHCP ACK")
+# Get DHCP ACK information
+dst_mac, ack_ip = fct_dhcp.get_ack_information(dhcp_ack)
