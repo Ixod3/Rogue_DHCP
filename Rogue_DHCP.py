@@ -34,7 +34,7 @@ args = parser.parse_args()
 
 # Fake host Thread
 threads = []
-for i in range(5):
+for i in range(2):
     thread = threading.Thread(target=fct_thread.fake_host, args=(i,))
     threads.append(thread)
 # Start threads

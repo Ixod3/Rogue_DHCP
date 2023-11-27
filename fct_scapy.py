@@ -13,6 +13,16 @@ def listener_start(src_mac):
 def listener_join(sniff_packet):
     sniff_packet.join()
     dhcp_offer = sniff_packet.results
-    #legit_dhcp_ip = results[0][scapy.IP].src
-    #legit_dhcp_mac = results[0][scapy.Ether].src
     return dhcp_offer
+
+def listener_start_icmp(ip):
+    sniff_packet = scapy.AsyncSniffer(count=1,filter=f"icmp and dst host {ip}")
+    sniff_packet.start()
+    time.sleep(0.1)
+    return sniff_packet
+
+def listener_join_icmp(sniff_packet):
+    sniff_packet.join()
+    request = sniff_packet.results
+    ip_src = request[0][scapy.IP].src
+    return ip_src
