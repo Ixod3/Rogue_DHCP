@@ -9,8 +9,17 @@ import fct_scan
 import fct_thread
 import argparse
 import threading
+import signal
 import sys
 import time
+
+# Stop all thread with ctrl+c
+def handler(signum, frame):
+    global exit_event
+    fct_thread.exit_event.set()
+    exit(1)
+ 
+signal.signal(signal.SIGINT, handler)
 
 # Set color variables
 Green = "\033[1;32m"
@@ -23,23 +32,17 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i","--interface", required=True, help="Interface network")
 args = parser.parse_args()
 
-# Thread fake host
-#thread_1 = threading.Thread(target=fct_thread.fake_host())
-
+# Fake host Thread
 threads = []
-for i in range(3):
+for i in range(5):
     thread = threading.Thread(target=fct_thread.fake_host, args=(i,))
     threads.append(thread)
-
-# Démarrage des threads
+# Start threads
 for thread in threads:
     thread.start()
-
-# Attendez que tous les threads se terminent
+# Wait all thread
 for thread in threads:
     thread.join()
-
-print("\nLe thread a terminé.")
 
 ## scan ARP
 #own_ip, network_id, host_number = fct_os.interface_information(args.interface)
