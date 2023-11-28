@@ -32,18 +32,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i","--interface", required=True, help="Interface network")
 args = parser.parse_args()
 
-# Fake host Thread
-threads = []
-for i in range(2):
-    thread = threading.Thread(target=fct_thread.fake_host, args=(i,))
-    threads.append(thread)
-# Start threads
-for thread in threads:
-    thread.start()
-# Wait all thread
-for thread in threads:
-    thread.join()
-
 ## scan ARP
 #own_ip, network_id, host_number = fct_os.interface_information(args.interface)
 #free_ip_list = fct_scan.arp(network_id, host_number, args.interface)
@@ -52,7 +40,7 @@ for thread in threads:
 #print(f"{Blue}[~]{White} Enable promisc mode on {args.interface}")
 #fct_os.set_promiscuous(args.interface)
 ## Get interface's mac
-#random_mac = fct_random.valid_mac()
+random_mac = fct_random.valid_mac()
 ## Get random hostname
 #hostname = fct_random.hostname()
 ## Get random transaction ID
@@ -77,3 +65,15 @@ for thread in threads:
 #print (f"{Green}[+]{White} Capture - DHCP ACK")
 ## Get DHCP ACK information
 #dst_mac, ack_ip = fct_dhcp.get_ack_information(dhcp_ack)
+
+# Fake host Thread
+threads = []
+for i in range(1):
+    thread = threading.Thread(target=fct_thread.fake_host, args=(i, random_mac, args.interface))
+    threads.append(thread)
+# Start threads
+for thread in threads:
+    thread.start()
+# Wait all thread
+for thread in threads:
+    thread.join()
