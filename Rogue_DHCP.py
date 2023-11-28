@@ -40,7 +40,7 @@ args = parser.parse_args()
 #print(f"{Blue}[~]{White} Enable promisc mode on {args.interface}")
 #fct_os.set_promiscuous(args.interface)
 ## Get interface's mac
-random_mac = fct_random.valid_mac()
+#random_mac = fct_random.valid_mac()
 ## Get random hostname
 #hostname = fct_random.hostname()
 ## Get random transaction ID
@@ -68,8 +68,8 @@ random_mac = fct_random.valid_mac()
 
 # Fake host Thread
 threads = []
-for i in range(1):
-    thread = threading.Thread(target=fct_thread.fake_host, args=(i, random_mac, args.interface))
+for i in range(5):
+    thread = threading.Thread(target=fct_thread.fake_host, args=(i, fct_random.valid_mac(), args.interface))
     threads.append(thread)
 # Start threads
 for thread in threads:
