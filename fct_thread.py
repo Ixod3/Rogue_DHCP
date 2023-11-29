@@ -31,6 +31,9 @@ def fake_host(thread_id, fake_host_mac, interface):
             print(f"[ICMP] L'adress IP source est {ip_src} a destination de l'IP 192.168.1.14{thread_id+1}")
             fct_icmp.reply(mac_src, mac_dst, ip_src, ip_dst, xid, seq, payload, interface)
 
+        # liberation de l'espace memoire
+        del arp_listener, mac_src, ip_dst, ip_src, icmp_listener, mac_dst, xid, seq, payload
+
         # Stop all thread with ctrl+c
         if exit_event.is_set():
             break
