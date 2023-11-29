@@ -68,7 +68,7 @@ args = parser.parse_args()
 
 # Fake host Thread
 threads = []
-for i in range(5):
+for i in range(1):
     thread = threading.Thread(target=fct_thread.fake_host, args=(i, fct_random.valid_mac(), args.interface))
     threads.append(thread)
 # Start threads
