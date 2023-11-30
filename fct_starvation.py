@@ -9,6 +9,7 @@ White = "\033[0m"
 # Import modules
 import fct_random
 import fct_dhcp
+import time
 
 def starvation(free_ip, interface):
 
@@ -40,5 +41,6 @@ def starvation(free_ip, interface):
             print(f"{Green}[DHCP]{White} New ip reserved - {ack_ip}")
             free_ip.remove(ack_ip)
             reserved_IP.append((ack_ip, ack_mac))
-    
+        time.sleep(1)
+
     return reserved_IP

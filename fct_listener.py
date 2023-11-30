@@ -57,19 +57,27 @@ def listener(free_ip, occuped_ip, interface):
     # Filtre
     filter_1 = f"arp and arp[6:2] = 1" # arp who-has
     filter_2 = f"icmp[icmptype] == 8" # icmp request
+    main_filter = ""
+
+    for ip, mac in reserved_ip:
+        if len(main_filter) != 0:
+            main_filter = f"{main_filter} or {filter_1} and host {ip} or {filter_2} and dst {ip}"
+        else:
+            main_filter = f"{filter_1} and host {ip} or {filter_2} and dst {ip}"
 
     while True:
-        sniff_packet = scapy.sniff(count=1,filter=f"{filter_1} or {filter_2}")
-        if sniff_packet[0].haslayer(scapy.IP):
-            for ip, mac in reserved_ip:
-                if sniff_packet[0][scapy.IP].dst == ip:
-                    thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, mac, interface), args=())
-                    thread_responder.start()
-        elif sniff_packet[0].haslayer(scapy.Ether):
-            for ip, mac in reserved_ip:
-                if sniff_packet[0][scapy.Ether].dst == mac:
-                    thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, mac, interface), args=())
-                    thread_responder.start()
+        sniff_packet = scapy.sniff(count=1,filter=f"{main_filter}")
+#        if sniff_packet[0].haslayer(scapy.IP):
+#            for ip, mac in reserved_ip:
+#                if sniff_packet[0][scapy.IP].dst == ip:
+        thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, mac, interface), args=())
+        thread_responder.start()
+#        elif sniff_packet[0].haslayer(scapy.Ether):
+#            for ip, mac in reserved_ip:
+#                if sniff_packet[0][scapy.Ether].dst == mac:
+#            thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, mac, interface), args=())
+#            thread_responder.start()
+
 #                position = reserved_ip.index(sniff_packet[0][scapy.IP].dst)
 #                thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, fake_host_mac, interface), args=())
 #                thread_responder.start()
