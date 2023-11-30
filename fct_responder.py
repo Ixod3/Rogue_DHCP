@@ -11,7 +11,7 @@ def responder(sniff_packet, fake_host_mac, interface):
             mac_src = sniff_packet[0][scapy.ARP].hwsrc
             ip_dst = sniff_packet[0][scapy.ARP].pdst
             ip_src = sniff_packet[0][scapy.ARP].psrc
-            print(f"[ARP] L'adresse MAC source est {mac_src} est recherche l'adresse IP {ip_dst}")
+            print(f"[ARP] L'adresse IP source est {ip_src} est recherche l'adresse IP {ip_dst}")
             fct_arp.reply(mac_src, ip_dst, ip_src, fake_host_mac, interface)
 
     # ICMP Reply

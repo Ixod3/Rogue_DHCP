@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# Set color variables
+Green = "\033[1;32m"
+Blue = "\033[1;34m"
+White = "\033[0m"
+
 # Import modules
 import time
 import subprocess
@@ -12,10 +17,11 @@ def get_mac(interface):
     return actual_mac
 
 def set_promiscuous(interface):
+    print(f"{Blue}[PROMISC]{White} Set interface {interface} to promiscuous mode")
     subprocess.run(f"sudo ifconfig {interface} promisc 2>&1 > /dev/null", shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
     time.sleep(2)
 
-def interface_information(interface):
+def get_informations(interface):
     cmd_return = subprocess.check_output(f"ip a l {interface}", shell=True, stderr=subprocess.STDOUT, text=True)
     own_ip = cmd_return.split("inet ")[1]
     own_ip = own_ip.split(" brd")[0]
