@@ -30,14 +30,22 @@ White = "\033[0m"
 # Parse command
 parser = argparse.ArgumentParser()
 parser.add_argument("-i","--interface", required=True, help="Interface network")
+parser.add_argument("-ns","--noscan", action='store_true', help="Disable ARP Scan")
 args = parser.parse_args()
 
 # Enable promisc mode 
 fct_interface.set_promiscuous(args.interface)
 
 # scan ARP
-own_ip, network_id, host_number = fct_interface.get_informations(args.interface)
-free_ip, occuped_ip = fct_arp.scan(network_id, host_number, args.interface)
+if (args.noscan):
+    own_ip, network_id, host_number = fct_interface.get_informations(args.interface)
+    free_ip = []
+    occuped_ip = []
+    for i in range(host_number):
+        free_ip.append(f"{network_id}{i+1}")
+else:
+    own_ip, network_id, host_number = fct_interface.get_informations(args.interface)
+    free_ip, occuped_ip = fct_arp.scan(network_id, host_number, args.interface)
 
 # listener
 fct_listener.listener(free_ip, occuped_ip, args.interface)
