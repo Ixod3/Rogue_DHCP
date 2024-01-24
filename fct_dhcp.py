@@ -42,7 +42,7 @@ def get_ack_information(dhcp_ack):
     return ack_mac, ack_ip
 
 def listener(mac):
-    sniff_packet = scapy.AsyncSniffer(count=1,filter=f"udp and src port 67 and dst port 68 and ether dst {mac}", timeout=5)
+    sniff_packet = scapy.AsyncSniffer(count=1, filter=f"udp and src port 67 and dst port 68 and ether dst {mac}", timeout=3)
     sniff_packet.start()
     time.sleep(0.1)
     return sniff_packet
