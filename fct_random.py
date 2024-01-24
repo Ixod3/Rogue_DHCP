@@ -5,12 +5,12 @@ import random
 
 def valid_mac():
     # Random product ID
-    bytes_4 = hex(random.randint(0, 254))[2:]
-    bytes_5 = hex(random.randint(0, 254))[2:]
-    bytes_6 = hex(random.randint(0, 254))[2:]
+    bytes_4 = hex(random.randint(17, 254))[2:]
+    bytes_5 = hex(random.randint(17, 254))[2:]
+    bytes_6 = hex(random.randint(17, 254))[2:]
 
     # Random vendor ID
-    ligne = random.randint(0, 2000)
+    ligne = random.randint(0, 2)
     with open("mac_vendor_id.txt", 'r') as fichier:
             lignes = fichier.readlines()
             if 0 <= ligne < len(lignes):
