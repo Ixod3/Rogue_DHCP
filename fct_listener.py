@@ -25,11 +25,11 @@ def listener(free_ip, occuped_ip, args):
                 main_filter = f"{main_filter} or dst {ip}"
             else:
                 main_filter = f"udp port 67 and (udp[8] == 1) or dst {ip}" # inclure l'ecoute des requete DHCP discover
-
-    if main_filter == "":
+    else:
         main_filter="udp port 67 and (udp[8] == 1)"
+        mac="ff:ff:ff:ff:ff:ff"
 
     while True:
         sniff_packet = scapy.sniff(count=1, filter=f"{main_filter}")
-        thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, args, fct_interface.get_informations_ip(args.interface), mac), args=())
+        thread_responder = threading.Thread(target=fct_responder.responder(sniff_packet, args, fct_interface.get_informations_ip(args.interface), mac, reserved_ip), args=())
         thread_responder.start()
