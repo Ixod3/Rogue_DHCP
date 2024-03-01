@@ -36,3 +36,28 @@ def get_informations(interface):
 
     return  own_ip, network_id, host_number
 
+def get_informations_ip(interface):
+    cmd_return = subprocess.check_output(f"ip a l {interface}", shell=True, stderr=subprocess.STDOUT, text=True)
+    own_ip = cmd_return.split("inet ")[1]
+    own_ip = own_ip.split(" brd")[0]
+    own_ip = own_ip.split("/")[0]
+
+    return  own_ip
+
+def get_informations_netmask(interface):
+    cmd_return = subprocess.check_output(f"ifconfig {interface}", shell=True, stderr=subprocess.STDOUT, text=True)
+    own_netmask = cmd_return.split("netmask ")[1]
+    own_netmask = own_netmask.split(" broadcast")[0]
+
+    return  own_netmask
+
+def get_informations_gateway(interface):
+    cmd_return = subprocess.check_output("ip route show | grep default | awk '{print $3}'", shell=True, stderr=subprocess.STDOUT, text=True)
+
+    return cmd_return
+
+def get_informations_nameserver(interface):
+    cmd_return = subprocess.check_output("cat /etc/resolv.conf | grep nameserver | awk '{print $2}'", shell=True, stderr=subprocess.STDOUT, text=True)
+    own_nameserver = cmd_return.split("\n")[0]
+
+    return own_nameserver
