@@ -10,24 +10,65 @@ Blue = "\033[1;34m"
 White = "\033[0m"
 
 # DHCP Discover
-def discover(src_mac, hostname, xid, interface):
-    src_mac_bytes = (int(src_mac.replace(":", ""), 16).to_bytes(6, "big"))
-    dhcp_discover = scapy.Ether(src=src_mac,dst="ff:ff:ff:ff:ff:ff") / scapy.IP(src="0.0.0.0", dst="255.255.255.255") / scapy.UDP(sport=68, dport=67) / scapy.BOOTP(chaddr=src_mac_bytes, xid=xid, flags=0x0000) / scapy.DHCP(options=[("message-type", "discover"), ('client_id', src_mac), ('param_req_list',[1,2,3,6,12,15,26,28,33,40,41,42,119,121]),('hostname', hostname), "end"])
-    scapy.sendp(dhcp_discover, iface=interface, verbose=0)
-    
+def discover(mac_broadcast, ip_broadcast, mac_client, ip_client, hostname, xid, args):
+
+    # Couche réseau
+    ethernet = scapy.Ether(dst=mac_broadcast, src=mac_client)
+    ip = scapy.IP(src=ip_client, dst=ip_broadcast)
+    udp = scapy.UDP(sport=68, dport=67)
+    bootp = scapy.BOOTP(chaddr=(int(mac_client.replace(":", ""), 16).to_bytes(6, "big")), xid=xid, flags=0x0000)
+    dhcp = scapy.DHCP(options=[('message-type', 'discover'), ('client_id', mac_client), ('param_req_list',[1,2,3,6,12,15,17,26,28,33,40,41,42,119,121,249,252]), ("max_dhcp_size", 576), ('hostname', hostname), "end"])
+
+    # Assemblage + Envoie de la requête
+    packet = ethernet/ip/udp/bootp/dhcp
+    scapy.sendp(packet, iface=args.interface, verbose=0)
+
+
 # DHCP Offer
-def offer():
-    print('pass')
+def offer(mac_client, ip_broadcast, mac_server, ip_client, hostname, xid, subnet_mask, ip_router, ip_nameserver, domain_name, lease_time, ip_offer, interface):
+    
+    time.sleep(1)
+    # Couche réseau
+    ethernet = scapy.Ether(dst=mac_client, src=mac_server)
+    ip = scapy.IP(src=ip_client, dst=ip_broadcast)
+    udp = scapy.UDP(sport=67, dport=68)
+    bootp = scapy.BOOTP(op=2, chaddr=(int(mac_client.replace(":", ""), 16).to_bytes(6, "big")), yiaddr=ip_offer, xid=xid, flags=0x0000)
+    dhcp = scapy.DHCP(options=[('message-type', 'offer'), ("subnet_mask", subnet_mask), ("router", ip_router), ("name_server", ip_nameserver), ("domain", domain_name), ("lease_time", lease_time), ('client_id', mac_client), ('hostname', hostname), "end"])
+
+    # Assemblage + Envoie de la requête
+    packet = ethernet/ip/udp/bootp/dhcp
+    scapy.sendp(packet, iface=interface, verbose=0)
+
 
 # DHCP Request
-def request(src_mac, request_ip, hostname, xid, interface):
-    src_mac_bytes = (int(src_mac.replace(":", ""), 16).to_bytes(6, "big"))
-    dhcp_request = scapy.Ether(src=src_mac,dst="ff:ff:ff:ff:ff:ff") / scapy.IP(src="0.0.0.0", dst="255.255.255.255") / scapy.UDP(sport=68, dport=67) / scapy.BOOTP(op=1, ciaddr="0.0.0.0", chaddr=src_mac_bytes, xid=xid) / scapy.DHCP(options=[('message-type', 'request'), ("client_id", b'\x01' + src_mac_bytes), ("param_req_list", (1), (2), (6), (12), (15), (26), (28), (121), (3), (33), (40), (41), (42), (119), (249), (252), (17)), ("max_dhcp_size", 1500), ("requested_addr", request_ip), ('hostname', hostname), 'end'])
-    scapy.sendp(dhcp_request, iface=interface, verbose=0)
+def request(mac_broadcast, ip_broadcast, mac_client, ip_client, hostname, xid, ip_dhcp_server, ip_request, args):
+
+    # Couche réseau
+    ethernet = scapy.Ether(dst=mac_broadcast, src=mac_client)
+    ip = scapy.IP(src=ip_client, dst=ip_broadcast)
+    udp = scapy.UDP(sport=68, dport=67)
+    bootp = scapy.BOOTP(chaddr=(int(mac_client.replace(":", ""), 16).to_bytes(6, "big")), xid=xid, flags=0x0000)
+    dhcp = scapy.DHCP(options=[('message-type', 'request'), ("requested_addr", ip_request), ("server_id", ip_dhcp_server), ('param_req_list',[1,2,3,6,12,15,17,26,28,33,40,41,42,119,121,249,252]), ("max_dhcp_size", 576), ('client_id', mac_client), ('hostname', hostname), "end"])
+
+    # Assemblage + Envoie de la requête
+    packet = ethernet/ip/udp/bootp/dhcp
+    scapy.sendp(packet, iface=args.interface, verbose=0)
+
 
 # DHCP Ack
-def ack():
-    print('pass')
+def ack(mac_client, ip_broadcast, mac_server, ip_client, hostname, xid, subnet_mask, ip_router, ip_nameserver, domain_name, lease_time, ip_offer, interface):
+    
+    time.sleep(1)
+    # Couche réseau
+    ethernet = scapy.Ether(dst=mac_client, src=mac_server)
+    ip = scapy.IP(src=ip_client, dst=ip_broadcast)
+    udp = scapy.UDP(sport=67, dport=68)
+    bootp = scapy.BOOTP(op=2, chaddr=(int(mac_client.replace(":", ""), 16).to_bytes(6, "big")), yiaddr=ip_offer, xid=xid, flags=0x0000)
+    dhcp = scapy.DHCP(options=[('message-type', 'ack'), ("subnet_mask", subnet_mask), ("router", ip_router), ("name_server", ip_nameserver), ("domain", domain_name), ("lease_time", lease_time), ('client_id', mac_client), ('hostname', hostname), "end"])
+
+    # Assemblage + Envoie de la requête
+    packet = ethernet/ip/udp/bootp/dhcp
+    scapy.sendp(packet, iface=interface, verbose=0)
 
 # Get DHCP Offer information
 def get_offer_information(dhcp_offer):
