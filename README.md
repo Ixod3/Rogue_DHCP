@@ -2,7 +2,7 @@
 
 ## Description
 
-Simple python Rogue DHCP script with fake hosts
+Simple python Rogue DHCP script with fake hosts.  
 Please use it for educational purposes only, I am not responsible for its use.
 
 ## Requirements
