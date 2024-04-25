@@ -14,7 +14,7 @@ import fct_dhcp
 import fct_interface
 import scapy.all as scapy
 
-def responder(sniff_packet, args, ip, mac, reserved_ip): # si IP non précisez alors mettre mon IP
+def responder(sniff_packet, args, ip, mac, reserved_ip): # if IP is not set, it will be set to the IP of the interface
     if args.fake_host:
         # ARP Reply
         if sniff_packet[0].haslayer(scapy.ARP):
@@ -107,5 +107,5 @@ def responder(sniff_packet, args, ip, mac, reserved_ip): # si IP non précisez a
         print(f"{Purple}[DHCP]{White} Distributed IP Address - {reserved_ip[0][0]}")
         fct_dhcp.ack(mac_dst, reserved_ip[0][0], mac_src, ip_src, hostname, xid, fct_interface.get_informations_netmask(args.interface), ip_gateway, ip_nameserver, domain_name, 7200, reserved_ip[0][0], args.interface)
 
-        # Suppresion de l'adresse IP attribué du tableau des adresse disponible
+        # Remove reserved IP address from the list
         del reserved_ip[0]

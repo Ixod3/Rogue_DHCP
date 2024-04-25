@@ -2,14 +2,10 @@
 
 # Import modules
 import scapy.all as scapy
-import fct_arp
-import fct_icmp
 import fct_starvation
 import fct_responder
 import fct_interface
 import threading
-import time
-import sys
 
 def listener(free_ip, occuped_ip, args):
 
