@@ -2,8 +2,10 @@
 
 ## Description
 
-Simple python Rogue DHCP script with fake hosts.  
-Please use it for educational purposes only, I am not responsible for its use.
+Python script for Rogue DHCP attack (DNS poisoning, gateway spoofing, etc.) with DHCP Starvation and Fake Host functionality for responds to ARP and ICMP requests from clients
+
+**Disclaimer:**
+This script is intended for educational purposes only. Do not use it for malicious activities. It can cause serious disruptions to a network and may lead to legal consequences. I am not responsible for its use.
 
 ## Requirements
 
